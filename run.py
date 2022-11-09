@@ -1,11 +1,10 @@
 import gym
 import sys
 
-
-
 from gym_connect_four import RandomPlayer, ConnectFourEnv, SavedPlayer
 from stable_baselines3 import DQN
 import torch as th
+
 
 
 
@@ -16,9 +15,10 @@ if __name__ == "__main__":
     if sys.argv[1] == "train":
         
         model = DQN("MlpPolicy", env, verbose=1, learning_rate=0.0005, exploration_fraction=0.1, exploration_final_eps=0.1, exploration_initial_eps=1.0)
-        #model = DQN.load("./model/against_random_v4")
+        
+        #model = DQN.load("./model/against")
         model.set_env(env)
-        model.learn(total_timesteps=2000000, log_interval= 4)
+        model.learn(total_timesteps=2000000, log_interval= 10)
         model.save("./model/against_minimax")
         del model
         
@@ -58,4 +58,5 @@ if __name__ == "__main__":
                 
                     
             
+
 
