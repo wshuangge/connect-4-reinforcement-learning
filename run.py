@@ -9,19 +9,17 @@ import torch as th
 
 
 
-
 env = gym.make("ConnectFour-v0")
 
 
 if __name__ == "__main__":
     if sys.argv[1] == "train":
         
-        #model = DQN("MlpPolicy", env, verbose=1, learning_rate=0.0005, exploration_fraction=0.1, exploration_final_eps=0.1, exploration_initial_eps=1.0)
-        
-        model = DQN.load("./model/against_random_v4")
+        model = DQN("MlpPolicy", env, verbose=1, learning_rate=0.0005, exploration_fraction=0.1, exploration_final_eps=0.1, exploration_initial_eps=1.0)
+        #model = DQN.load("./model/against_random_v4")
         model.set_env(env)
         model.learn(total_timesteps=2000000, log_interval= 4)
-        model.save("./model/against_random_v5")
+        model.save("./model/against_minimax")
         del model
         
     elif sys.argv[1] == "inference":
@@ -30,7 +28,7 @@ if __name__ == "__main__":
         draw = 0
         invalid = 0
         
-        model = DQN.load("./model/against_random_v4")
+        model = DQN.load("./model/against_minimax")
         obs = env.reset()
         
         while True:
@@ -60,5 +58,4 @@ if __name__ == "__main__":
                 
                     
             
-
 
