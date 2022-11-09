@@ -79,4 +79,3 @@ def render_board(board,
         ], fill=color)
 
     return np.array(image)
-

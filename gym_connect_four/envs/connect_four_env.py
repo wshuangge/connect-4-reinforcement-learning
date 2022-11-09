@@ -7,6 +7,8 @@ from typing import Tuple, NamedTuple, Hashable, Optional
 from stable_baselines3 import DQN
 from random import randint
 
+from . import utils_first , utils_second
+import math
 import gym
 import numpy as np
 import pygame
@@ -80,6 +82,24 @@ class RandomPlayer(Player):
     def save_model(self, model_prefix: str = None):
         pass
     
+
+class MinimaxPlayer(Player):
+    def __init__(self, env, name='MinimaxPlayer', model_prefix=None):
+        super(MinimaxPlayer, self).__init__(env, name)
+
+        if model_prefix is None:
+            model_prefix = self.name
+
+        self.observation_space = env.observation_space.shape
+        self.action_space = env.action_space.n
+    
+    def get_next_action(self, state: np.ndarray) -> int:
+        if self.env.first_hand=="me":
+            return utils_first.minimax(np.flipud(state), 5, -math.inf, math.inf, True)[0]
+        else:
+            return utils_second.minimax(np.flipud(state), 5, -math.inf, math.inf, True)[0]
+            
+        
 
 
 class SavedPlayer(Player):
@@ -188,7 +208,8 @@ class ConnectFourEnv(gym.Env):
         self.__board = np.zeros(self.board_shape, dtype=int)
         
         #self.agent2 = RandomPlayer(self, 'B')
-        self.agent2 = SavedPlayer(self, './model/against_random_v3')
+        #self.agent2 = SavedPlayer(self, './model/against_random_v3')
+        self.agent2 = MinimaxPlayer(self, 'Minimax')
 
         self.__player_color = 1
         self.__screen = None
@@ -296,8 +317,10 @@ class ConnectFourEnv(gym.Env):
         self.__rendered_board = self._update_board_render()
         
         if randint(0, 1) == 0:
+            self.first_hand = "me"
             pass    
         else:
+            self.first_hand = "you"
             action2 = self.agent2.get_next_action(self.__board)
             for index in list(reversed(range(self.board_shape[0]))):
                 if self.__board[index][action2] == 0:
